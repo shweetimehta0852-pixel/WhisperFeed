@@ -8,6 +8,13 @@
 
 ---
 
+## 🎥 Live Demo Video
+
+- **Video Link:** [Watch WhisperFeed Protocol Demo](https://photos.app.goo.gl/H5WvNshGKyhsvfKe9)
+- **URL:** `https://photos.app.goo.gl/H5WvNshGKyhsvfKe9`
+
+---
+
 ## 🌐 Live Demo & Web Application
 
 - **Live dApp URL:** [https://whisper-feed-eta.vercel.app/](https://whisper-feed-eta.vercel.app/)
