@@ -241,6 +241,7 @@ export class WhisperContractService {
     const titleHash = await this.sha256Hex(title);
     this.nullifierSet.clear();
     this.ledgerState = {
+      contractAddress: this.ledgerState.contractAddress,
       surveyId: newId,
       surveyTitle: title,
       organizerPubKey: this.ledgerState.organizerPubKey,
