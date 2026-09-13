@@ -190,7 +190,8 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 ```bash
 npx ts-node scripts/deploy.ts
 ```
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+---
 
 ## 🧪 Testing Coverage Summary
 
