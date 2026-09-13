@@ -8,6 +8,13 @@
 
 ---
 
+## 🌐 Live Demo & Web Application
+
+- **Live dApp URL:** [https://whisper-feed-eta.vercel.app/](https://whisper-feed-eta.vercel.app/)
+- **Network Compatibility:** Midnight Preprod (Lace Wallet / Simulator)
+
+---
+
 ## 🔗 Midnight Preprod Deployment & Contract Identifiers
 
 | Parameter | Value / Endpoint |
