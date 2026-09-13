@@ -281,5 +281,13 @@ export circuit submit_whisper(target_survey_id: Field): [Bytes<32>, Uint<8>] {
 
 ---
 
+## 👤 Author & Repository Details
+
+- **Author Profile:** [shweetimehta0852-pixel](https://github.com/shweetimehta0852-pixel)
+- **GitHub Repository:** [https://github.com/shweetimehta0852-pixel/WhisperFeed](https://github.com/shweetimehta0852-pixel/WhisperFeed)
+- **Project Target:** Midnight Network Hackathon / Level 3 First Quarter Submission
+
+---
+
 ## 📄 License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
