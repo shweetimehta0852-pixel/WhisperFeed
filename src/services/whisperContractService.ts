@@ -40,14 +40,20 @@ export class WhisperContractService {
       '0x12a938f0e4b8c9d0123847561928374619283746192837461928374619283746',
       '0x77c981240f918237461928374619283746192837461928374619283746192837'
     ];
+    const sampleTxHashes = [
+      '0xpreprod_tx_7f4a8b29c1e099834d88f4b23190abce992147ac527189fa3c0049281aef420b98',
+      '0xpreprod_tx_992147ac527189fa3c0049281aef420b987f4a8b29c1e099834d88f4b23190abce',
+      '0xpreprod_tx_c0049281aef420b987f4a8b29c1e099834d88f4b23190abce992147ac527189fa3',
+      '0xpreprod_tx_527189fa3c0049281aef420b987f4a8b29c1e099834d88f4b23190abce992147ac'
+    ];
 
     sampleNullifiers.forEach((nf, index) => {
       this.nullifierSet.add(nf);
       this.submissionRecords.unshift({
         id: `whisper-sub-${index + 1}`,
-        txHash: `0xpreprod_tx_${Math.random().toString(16).substring(2, 10)}${Math.random().toString(16).substring(2, 10)}`,
+        txHash: sampleTxHashes[index],
         nullifier: nf,
-        timestamp: Date.now() - (index + 1) * 3600 * 1000 * 4,
+        timestamp: 1726200000000 - index * 3600 * 1000 * 4,
         surveyId: this.ledgerState.surveyId,
         blockHeight: 142080 + index * 12,
         scoreDisclosed: [9, 8, 10, 8][index],

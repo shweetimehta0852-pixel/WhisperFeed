@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { ShieldCheck, ExternalLink, Clock, Hash, CheckCircle, Database } from 'lucide-react';
 import { SubmissionRecord } from '../lib/midnight-types';
 
@@ -9,7 +9,14 @@ interface ProofLogProps {
 }
 
 export const ProofLog: React.FC<ProofLogProps> = ({ records }) => {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const formatTime = (ts: number) => {
+    if (!mounted) return 'recent';
     const diff = Math.floor((Date.now() - ts) / 1000);
     if (diff < 60) return `${diff}s ago`;
     if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;

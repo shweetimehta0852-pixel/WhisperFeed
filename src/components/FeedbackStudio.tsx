@@ -28,10 +28,9 @@ export const FeedbackStudio: React.FC<FeedbackStudioProps> = ({
 }) => {
   const [feedbackText, setFeedbackText] = useState('');
   const [score, setScore] = useState<number>(9);
-  const [secretKey, setSecretKey] = useState<string>(() => {
-    // Generate random 32-byte secret key on load for ease of testing
-    return '0x' + Array.from({ length: 32 }, () => Math.floor(Math.random() * 256).toString(16).padStart(2, '0')).join('');
-  });
+  const [secretKey, setSecretKey] = useState<string>(
+    '0x3a9f84b12c8e102938470042d76fba98e3b1c09938f90e8a7431260011223344'
+  );
   const [authToken, setAuthToken] = useState<string>('0x7f1190ab7762cc409812e987ac11874982635418a09b8c716253448899aabbcc');
   const [showAdvancedWitness, setShowAdvancedWitness] = useState(false);
 
