@@ -8,6 +8,20 @@
 
 ---
 
+## 🔗 Midnight Preprod Deployment & Contract Identifiers
+
+| Parameter | Value / Endpoint |
+| :--- | :--- |
+| **Network Target** | **Midnight Preprod (Testnet)** |
+| **Canonical Contract ID** | [`02008f4a8b29c1e099834d6712398bfa79c0281bfe44210a99c0471289de6102`](https://explorer.preprod.midnight.network/contract/02008f4a8b29c1e099834d6712398bfa79c0281bfe44210a99c0471289de6102) |
+| **Smart Contract Source** | [`contract/whisper_feed.compact`](contract/whisper_feed.compact) |
+| **Block Explorer** | [https://explorer.preprod.midnight.network/contract/02008f4a8b29c1e099834d6712398bfa79c0281bfe44210a99c0471289de6102](https://explorer.preprod.midnight.network/contract/02008f4a8b29c1e099834d6712398bfa79c0281bfe44210a99c0471289de6102) |
+| **GraphQL Indexer URI** | `https://indexer.preprod.midnight.network/api/v1/graphql` |
+| **Prover Server URI** | `http://localhost:6300` |
+| **Node RPC Endpoint** | `https://rpc.preprod.midnight.network` |
+
+---
+
 ## 🌟 Executive Summary
 
 **WhisperFeed** is a decentralized, zero-knowledge feedback and whistleblowing protocol engineered natively on the **Midnight Network**. 
@@ -105,6 +119,47 @@ In Compact, data is private by default. WhisperFeed explicitly calls `disclose()
 
 ---
 
+## 📂 Repository Structure
+
+```
+WhisperFeed/
+├── contract/
+│   └── whisper_feed.compact         # Production Compact Smart Contract
+├── scripts/
+│   └── deploy.ts                    # Midnight Preprod Deployment Script
+├── src/
+│   ├── app/
+│   │   ├── globals.css              # Midnight Cyber Grid & Glassmorphism theme
+│   │   ├── layout.tsx               # Root Layout & metadata
+│   │   ├── not-found.tsx            # Custom 404 Route
+│   │   └── page.tsx                 # Main Protocol Dashboard & Feedback Terminal
+│   ├── components/
+│   │   ├── Header.tsx               # Lace Wallet connector & Contract ID badge
+│   │   ├── SurveyOverview.tsx       # Active survey topic & verifiable counter
+│   │   ├── FeedbackStudio.tsx       # Encrypted Feedback Studio & Witness Inputs
+│   │   ├── PrivacyExplorer.tsx      # What the Admin Sees vs Hidden Witness
+│   │   ├── ProofLog.tsx             # Live cryptographic proof stream
+│   │   ├── ZKProofModal.tsx         # 4-Stage live ZK proof pipeline modal
+│   │   └── OrganizerModal.tsx       # Organizer governance & lifecycle drawer
+│   ├── config/
+│   │   └── midnight.config.ts       # Midnight Preprod Contract Identifiers & URIs
+│   ├── lib/
+│   │   └── midnight-types.ts        # TypeScript types & protocol interfaces
+│   └── services/
+│       ├── laceWallet.ts            # Lace DApp connector bridge
+│       └── whisperContractService.ts# Contract interaction & witness generation
+├── tests/
+│   └── whisper_feed.test.ts         # Vitest unit & integration test suite
+├── .env.example                     # Preprod environment variables template
+├── .github/
+│   └── workflows/
+│       └── ci.yml                   # GitHub Actions CI/CD Pipeline
+├── README.md                        # Documentation & Privacy Model
+└── LICENSE                          # MIT License
+```
+
+---
+
 ## 🛠️ Quick Start & Local Execution
 
 ### Prerequisites
@@ -114,8 +169,8 @@ In Compact, data is private by default. WhisperFeed explicitly calls `disclose()
 
 ### 1. Clone & Install Dependencies
 ```bash
-git clone https://github.com/midnight-ntwrk/whisperfeed.git
-cd whisperfeed
+git clone https://github.com/shweetimehta0852-pixel/WhisperFeed.git
+cd WhisperFeed
 npm install
 ```
 
@@ -128,6 +183,12 @@ npm test
 ### 3. Start Frontend Development Server
 ```bash
 npm run dev
+```
+Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+### 4. Deploy Contract to Midnight Preprod
+```bash
+npx ts-node scripts/deploy.ts
 ```
 Open [http://localhost:3000](http://localhost:3000) in your browser.
 
