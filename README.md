@@ -131,8 +131,6 @@ npm run dev
 ```
 Open [http://localhost:3000](http://localhost:3000) in your browser.
 
----
-
 ## 🧪 Testing Coverage Summary
 
 | Test Case | Description | Status |
@@ -141,6 +139,18 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 | **Test 2: Anti-Replay / Double Submission** | Rejects identical secret key / nullifier collision for the same survey. | ✅ Passed |
 | **Test 3: Private Score Bounds** | Rejects out-of-bounds ratings ($< 1$ or $> 10$) inside the circuit. | ✅ Passed |
 | **Test 4: Survey Lifecycle Control** | Verifies organizer authorization and submission blocking when paused. | ✅ Passed |
+
+### 📸 Test Suite Execution Verification
+![WhisperFeed Unit & Integration Test Results](image.png)
+
+---
+
+## 🔄 CI/CD Automated Pipeline
+
+WhisperFeed includes a comprehensive GitHub Actions workflow that automatically validates Compact smart contract syntax, runs all unit/integration tests, and compiles the Next.js production build on every push and pull request.
+
+### 📸 GitHub Actions CI/CD Pipeline Run
+![WhisperFeed GitHub Actions CI/CD Pipeline Passed](image-1.png)
 
 ---
 
