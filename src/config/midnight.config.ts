@@ -18,7 +18,7 @@ export const MIDNIGHT_CONFIG: MidnightNetworkConfig = {
   nodeUri: process.env.NEXT_PUBLIC_MIDNIGHT_NODE_URI || 'https://rpc.preprod.midnight.network',
   provingServerUri: process.env.NEXT_PUBLIC_MIDNIGHT_PROVING_SERVER_URI || 'http://localhost:6300',
   // Midnight Canonical Contract Address (Hex format for Preprod ledger deployment)
-  contractAddress: process.env.NEXT_PUBLIC_MIDNIGHT_CONTRACT_ADDRESS || '02008f4a8b29c1e099834d6712398bfa79c0281bfe44210a99c0471289de6102',
+  contractAddress: process.env.NEXT_PUBLIC_MIDNIGHT_CONTRACT_ADDRESS || '7d2c6fa779f1c124ce7f54960ff27d04805a707e5392b565b01b3094f8893a2e',
   contractName: 'WhisperFeedProtocol',
-  explorerUrl: 'https://explorer.preprod.midnight.network/contract',
+  explorerUrl: 'https://preprod.midnight.network/contract',
 };
