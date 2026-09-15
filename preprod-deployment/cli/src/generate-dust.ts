@@ -22,8 +22,14 @@ import { HDWallet, Roles } from '@midnight-ntwrk/wallet-sdk-hd';
 import { getNetworkId } from '@midnight-ntwrk/midnight-js-network-id';
 import * as rx from 'rxjs';
 
+import crypto from 'node:crypto';
+
 export const getUnshieldedSeed = (seed: string): Uint8Array<ArrayBufferLike> => {
-  const seedBuffer = Buffer.from(seed, 'hex');
+  let hexSeed = seed.trim();
+  if (!/^[0-9a-fA-F]{64}$/.test(hexSeed)) {
+    hexSeed = crypto.createHash('sha256').update(hexSeed).digest('hex');
+  }
+  const seedBuffer = Buffer.from(hexSeed, 'hex');
   const hdWalletResult = HDWallet.fromSeed(seedBuffer);
 
   const { hdWallet } = hdWalletResult as {

@@ -18,9 +18,22 @@ import { unshieldedToken } from '@midnight-ntwrk/midnight-js-protocol/ledger';
 import { FaucetClient } from '@midnight-ntwrk/testkit-js';
 import * as Rx from 'rxjs';
 
+import crypto from 'node:crypto';
+
+function normalizeSeed(s?: string): string {
+  if (!s) return crypto.randomBytes(32).toString('hex');
+  const trimmed = s.trim();
+  if (/^[0-9a-fA-F]{64}$/.test(trimmed)) {
+    return trimmed.toLowerCase();
+  }
+  return crypto.createHash('sha256').update(trimmed).digest('hex');
+}
+
 async function main() {
   console.log("Starting WhisperFeed deployment to Preprod...");
-  const seed = process.env.WALLET_SEED || 'please enjoy bread milk lady devote female ancient hollow split quit east rich cable job grass bounce enter rule tip grocery pear visa chimney';
+  const rawSeed = process.env.WALLET_SEED || 'please enjoy bread milk lady devote female ancient hollow split quit east rich cable job grass bounce enter rule tip grocery pear visa chimney';
+  const seed = normalizeSeed(rawSeed);
+  console.log(`Using normalized wallet seed: ${seed.slice(0, 8)}...${seed.slice(-8)}`);
   
   const config = new PreprodRemoteConfig();
   const logger = await createLogger(config.logDir, false);
