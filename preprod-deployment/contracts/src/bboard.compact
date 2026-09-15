@@ -80,7 +80,7 @@ export circuit submit_whisper(
 
     // Increment public aggregate ledger counters
     submission_count.increment(1);
-    aggregate_score_sum.increment(disclosed_score as Uint<64>);
+    aggregate_score_sum.increment(disclosed_score as Uint<16>);
 
     return [disclosed_nullifier, disclosed_score];
 }
