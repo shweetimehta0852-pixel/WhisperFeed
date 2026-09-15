@@ -1,23 +1,16 @@
 // WhisperFeed - Anonymous Feedback & Survey Protocol with Verifiable Participation
 // Midnight Network Compact Smart Contract
-// Pragma specification for Compact compiler
 
-pragma language_version >= 0.20.0;
+pragma language_version >= 0.15;
 
 import CompactStandardLibrary;
 
 // Struct representing the respondent's private witness for an anonymous submission
 export struct SubmissionWitness {
-    participant_sk: Bytes<32>,      // Private key / secret entropy of participant
-    survey_auth_token: Bytes<32>,   // Proof of authorization or invite token hash
-    confidential_score: Uint<8>,    // Private rating score (1 to 10)
+    participant_sk: Bytes<32>,       // Private key / secret entropy of participant
+    survey_auth_token: Bytes<32>,    // Proof of authorization or invite token hash
+    confidential_score: Uint<8>,     // Private rating score (1 to 10)
     feedback_payload_hash: Bytes<32> // SHA256 / Poseidon hash of encrypted feedback text
-}
-
-// Struct representing survey metadata stored on public ledger
-export struct SurveyConfig {
-    target_threshold: Uint<32>,
-    category_id: Uint<16>
 }
 
 // Witnesses defined for off-chain private inputs
@@ -28,30 +21,27 @@ witness get_organizer_secret(): Bytes<32>;
 export ledger survey_id: Field;
 export ledger organizer_pk: Bytes<32>;
 export ledger is_active: Boolean;
-export ledger submission_count: Uint<32>;
+export ledger submission_count: Counter;
 export ledger aggregate_score_sum: Uint<64>;
 export ledger target_threshold: Uint<32>;
 export ledger title_hash: Bytes<32>;
 
-// Nullifier map to mathematically prevent double submissions without revealing identity
-export ledger nullifiers: Map<Bytes<32>, Boolean>;
+// Nullifier set to mathematically prevent double submissions without revealing identity
+export ledger nullifiers: Set<Bytes<32>>;
 
-// Constructor circuit to initialize a new survey instance
-export circuit initialize_survey(
+// Constructor to initialize a new survey instance
+constructor(
     new_survey_id: Field,
     admin_public_key: Bytes<32>,
     survey_title_hash: Bytes<32>,
     threshold: Uint<32>
-): [] {
-    assert !is_active "Survey already active or previously initialized";
-    
+) {
     survey_id = disclose(new_survey_id);
     organizer_pk = disclose(admin_public_key);
     title_hash = disclose(survey_title_hash);
     target_threshold = disclose(threshold);
-    submission_count = 0;
-    aggregate_score_sum = 0;
     is_active = true;
+    aggregate_score_sum = 0;
 }
 
 // Circuit: Submit an anonymous whisper feedback entry
@@ -60,44 +50,37 @@ export circuit submit_whisper(
     target_survey_id: Field
 ): [Bytes<32>, Uint<8>] {
     // 1. Verify that the survey is active and matching target
-    assert is_active "WhisperFeed survey is currently closed or inactive";
-    assert survey_id == target_survey_id "Survey ID mismatch";
+    assert(is_active, "WhisperFeed survey is currently closed or inactive");
+    assert(survey_id == target_survey_id, "Survey ID mismatch");
 
     // 2. Fetch private witness from the respondent's local secure wallet/environment
     const witness_data = get_submission_witness();
 
     // 3. Constrain valid rating score range within private circuit (e.g. 1 to 10)
-    assert witness_data.confidential_score >= 1 && witness_data.confidential_score <= 10 
-        "Rating score must be bounded between 1 and 10";
+    assert(witness_data.confidential_score >= 1 && witness_data.confidential_score <= 10, "Rating score must be bounded between 1 and 10");
 
-    // 4. Derive deterministic nullifier = Hash(participant_sk, survey_id, "WHISPER_FEED_V1_NULLIFIER")
-    // This allows exact 1 vote per secret key per survey without revealing participant_sk
-    const nullifier_seed = persistent_hash<Vector<3, Field>>([
-        target_survey_id,
-        bytes32_to_field(witness_data.participant_sk),
-        bytes32_to_field(witness_data.survey_auth_token)
+    // 4. Derive deterministic nullifier = Hash(participant_sk, survey_id, auth_token)
+    const computed_nullifier = persistentHash<Vector<3, Bytes<32>>>([
+        field_to_bytes32(target_survey_id),
+        witness_data.participant_sk,
+        witness_data.survey_auth_token
     ]);
-    const computed_nullifier = field_to_bytes32(nullifier_seed);
 
     // 5. Verify the nullifier has never been consumed before
-    assert !nullifiers.member(computed_nullifier) "Double-submission detected: Nullifier already spent";
+    assert(!nullifiers.member(disclose(computed_nullifier)), "Double-submission detected: Nullifier already spent");
 
     // 6. Verify invite/participation authorization
-    // In production, can also verify Merkle membership root against authorized participant tree
-    assert witness_data.survey_auth_token != 0x0000000000000000000000000000000000000000000000000000000000000000
-        "Invalid or empty participant authorization token";
+    assert(witness_data.survey_auth_token != 0x0000000000000000000000000000000000000000000000000000000000000000, "Invalid or empty participant authorization token");
 
     // 7. State updates using selective disclosure:
-    // Only disclose the nullifier (to prevent double voting) and the rating delta (to aggregate metrics).
-    // The participant's identity (participant_sk) and individual feedback body hash remain hidden.
     const disclosed_nullifier = disclose(computed_nullifier);
     const disclosed_score = disclose(witness_data.confidential_score);
 
     // Record nullifier to permanently prevent replay
-    nullifiers.insert(disclosed_nullifier, true);
+    nullifiers.insert(disclosed_nullifier);
 
     // Increment public aggregate ledger counters
-    submission_count = submission_count + 1;
+    submission_count.increment(1);
     aggregate_score_sum = aggregate_score_sum + (disclosed_score as Uint<64>);
 
     return [disclosed_nullifier, disclosed_score];
@@ -105,23 +88,22 @@ export circuit submit_whisper(
 
 // Circuit: Close the survey (Organizer only)
 export circuit close_survey(): [] {
-    assert is_active "Survey is not active";
+    assert(is_active, "Survey is not active");
     
-    // Check organizer signature / witness
     const org_secret = get_organizer_secret();
-    const computed_pk = field_to_bytes32(persistent_hash<Field>(bytes32_to_field(org_secret)));
-    assert computed_pk == organizer_pk "Unauthorized: Only survey organizer can close survey";
+    const computed_pk = persistentHash<Vector<2, Bytes<32>>>([pad(32, "whisper:org"), org_secret]);
+    assert(computed_pk == organizer_pk, "Unauthorized: Only survey organizer can close survey");
 
     is_active = false;
 }
 
 // Circuit: Reopen the survey (Organizer only)
 export circuit reopen_survey(): [] {
-    assert !is_active "Survey is already active";
+    assert(!is_active, "Survey is already active");
 
     const org_secret = get_organizer_secret();
-    const computed_pk = field_to_bytes32(persistent_hash<Field>(bytes32_to_field(org_secret)));
-    assert computed_pk == organizer_pk "Unauthorized: Only survey organizer can reopen survey";
+    const computed_pk = persistentHash<Vector<2, Bytes<32>>>([pad(32, "whisper:org"), org_secret]);
+    assert(computed_pk == organizer_pk, "Unauthorized: Only survey organizer can reopen survey");
 
     is_active = true;
 }
