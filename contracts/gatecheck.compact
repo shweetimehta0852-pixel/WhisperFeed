@@ -22,7 +22,7 @@ export ledger survey_id: Field;
 export ledger organizer_pk: Bytes<32>;
 export ledger is_active: Boolean;
 export ledger submission_count: Counter;
-export ledger aggregate_score_sum: Uint<64>;
+export ledger aggregate_score_sum: Counter;
 export ledger target_threshold: Uint<32>;
 export ledger title_hash: Bytes<32>;
 
@@ -41,7 +41,6 @@ constructor(
     title_hash = disclose(survey_title_hash);
     target_threshold = disclose(threshold);
     is_active = true;
-    aggregate_score_sum = 0;
 }
 
 // Circuit: Submit an anonymous whisper feedback entry
@@ -81,7 +80,7 @@ export circuit submit_whisper(
 
     // Increment public aggregate ledger counters
     submission_count.increment(1);
-    aggregate_score_sum = aggregate_score_sum + (disclosed_score as Uint<64>);
+    aggregate_score_sum.increment(disclosed_score as Uint<64>);
 
     return [disclosed_nullifier, disclosed_score];
 }
