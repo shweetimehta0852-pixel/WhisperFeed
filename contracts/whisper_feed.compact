@@ -61,7 +61,7 @@ export circuit submit_whisper(
 
     // 4. Derive deterministic nullifier = Hash(participant_sk, survey_id, auth_token)
     const computed_nullifier = persistentHash<Vector<3, Bytes<32>>>([
-        field_to_bytes32(target_survey_id),
+        pad(32, "whisper:null"),
         witness_data.participant_sk,
         witness_data.survey_auth_token
     ]);
@@ -70,7 +70,7 @@ export circuit submit_whisper(
     assert(!nullifiers.member(disclose(computed_nullifier)), "Double-submission detected: Nullifier already spent");
 
     // 6. Verify invite/participation authorization
-    assert(witness_data.survey_auth_token != 0x0000000000000000000000000000000000000000000000000000000000000000, "Invalid or empty participant authorization token");
+    assert(witness_data.survey_auth_token != pad(32, ""), "Invalid or empty participant authorization token");
 
     // 7. State updates using selective disclosure:
     const disclosed_nullifier = disclose(computed_nullifier);
@@ -106,13 +106,4 @@ export circuit reopen_survey(): [] {
     assert(computed_pk == organizer_pk, "Unauthorized: Only survey organizer can reopen survey");
 
     is_active = true;
-}
-
-// Helper functions for type conversions in Compact
-circuit bytes32_to_field(val: Bytes<32>): Field {
-    return val as Field;
-}
-
-circuit field_to_bytes32(val: Field): Bytes<32> {
-    return val as Bytes<32>;
 }
